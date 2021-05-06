@@ -35,8 +35,8 @@ udp_rx_callback(struct simple_udp_connection *c,
 
   LOG_INFO("Received response '%.*s' from ", datalen, (char *)data);
   LOG_INFO_6ADDR(sender_addr);
-  LOG_INFO("%d node rank\n",rpl_get_default_instance()->current_dag->rank);
-  LOG_INFO("Clock seconds %lu\n",clock_seconds());
+  LOG_INFO("%d node rank\n", rpl_get_default_instance()->current_dag->rank);
+  LOG_INFO("Clock seconds %lu\n", clock_seconds());
 #if LLSEC802154_CONF_ENABLED
   LOG_INFO_(" LLSEC LV:%d", uipbuf_get_attr(UIPBUF_ATTR_LLSEC_LEVEL));
 #endif
@@ -51,7 +51,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
   uip_ipaddr_t dest_ipaddr;
 
   PROCESS_BEGIN();
- //SENSORS_ACTIVATE(button_sensor);
+  SENSORS_ACTIVATE(button_sensor);
   /* Initialize UDP connection */
   simple_udp_register(&udp_conn, UDP_CLIENT_PORT, NULL,
                       UDP_SERVER_PORT, udp_rx_callback);
@@ -63,19 +63,19 @@ PROCESS_THREAD(udp_client_process, ev, data)
 
     if (NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&dest_ipaddr))
     {
-        // if ((ev == sensors_event) && (data == &button_sensor))
-        //     {
-        //         if (attack_flag)
-        //         {
-        //             printf("Attackkkkkk deavtivated\n");
-        //             attack_flag = 0;
-        //         }
-        //         else
-        //         {
-        //             printf(" Attackkkk activated\n");
-        //             attack_flag = 1;
-        //         }
-        //     }
+      if ((ev == sensors_event) && (data == &button_sensor))
+      {
+        if (attack_flag)
+        {
+          printf("Attackkkkkk deavtivated\n");
+          attack_flag = 0;
+        }
+        else
+        {
+          printf(" Attackkkk activated\n");
+          attack_flag = 1;
+        }
+      }
       /* Send to DAG root */
       LOG_INFO("Sending request %u to ", count);
       LOG_INFO_6ADDR(&dest_ipaddr);
@@ -90,8 +90,9 @@ PROCESS_THREAD(udp_client_process, ev, data)
     }
 
     /* Add some jitter */
-     //if(attack_flag)
-    etimer_set(&periodic_timer, SEND_INTERVAL - CLOCK_SECOND + (random_rand() % (2 * CLOCK_SECOND)));
+    if (attack_flag)
+      etimer_set(&periodic_timer, SEND_INTERVAL - CLOCK_SECOND + (random_rand() % (2 * CLOCK_SECOND)));
+    
   }
 
   PROCESS_END();
