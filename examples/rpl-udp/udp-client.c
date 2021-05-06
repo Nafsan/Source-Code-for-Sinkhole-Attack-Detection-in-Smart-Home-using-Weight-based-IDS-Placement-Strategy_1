@@ -1,6 +1,11 @@
 #include "contiki.h"
 #include "net/routing/routing.h"
 #include "random.h"
+#include "net/ipv6/uip-sr.h"
+#include "net/nbr-table.h"
+#include "net/link-stats.h"
+#include "sys/node-id.h"
+#include "net/ipv6/uiplib.h"
 #include "net/netstack.h"
 #include "net/routing/rpl-classic/rpl.h"
 #include "net/routing/rpl-classic/rpl-private.h"
@@ -8,6 +13,8 @@
 #include "net/ipv6/simple-udp.h"
 #include "dev/button-sensor.h"
 #include "sys/log.h"
+#include <math.h>
+#include "sys/node-id.h"
 #define LOG_MODULE "App"
 #define LOG_LEVEL LOG_LEVEL_INFO
 
@@ -35,8 +42,8 @@ udp_rx_callback(struct simple_udp_connection *c,
 
   LOG_INFO("Received response '%.*s' from ", datalen, (char *)data);
   LOG_INFO_6ADDR(sender_addr);
-  LOG_INFO("%d node rank\n",rpl_get_default_instance()->current_dag->rank);
-  LOG_INFO("Clock seconds %lu\n",clock_seconds());
+  // LOG_INFO("%d node rank\n", rpl_get_default_instance()->current_dag->rank);
+  LOG_INFO("Clock seconds %lu\n", clock_seconds());
 #if LLSEC802154_CONF_ENABLED
   LOG_INFO_(" LLSEC LV:%d", uipbuf_get_attr(UIPBUF_ATTR_LLSEC_LEVEL));
 #endif
@@ -67,9 +74,10 @@ PROCESS_THREAD(udp_client_process, ev, data)
       LOG_INFO("Sending request %u to ", count);
       LOG_INFO_6ADDR(&dest_ipaddr);
       LOG_INFO_("\n");
-      snprintf(str, sizeof(str), "hello %d", count);
+      snprintf(str, sizeof(str), "hello I am IDS %d", count);
       simple_udp_sendto(&udp_conn, str, strlen(str), &dest_ipaddr);
       count++;
+      
     }
     else
     {

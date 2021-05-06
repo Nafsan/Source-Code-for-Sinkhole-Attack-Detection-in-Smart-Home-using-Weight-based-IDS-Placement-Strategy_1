@@ -62,7 +62,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <limits.h>
-#include<stdlib.h>
+#include <stdlib.h>
 #include <string.h>
 #define LOG_MODULE "RPL"
 #define LOG_LEVEL LOG_LEVEL_RPL
@@ -78,7 +78,6 @@ static rpl_of_t *const objective_functions[] = RPL_SUPPORTED_OFS;
 
 /*---------------------------------------------------------------------------*/
 /* RPL definitions. */
-
 #ifndef RPL_CONF_GROUNDED
 #define RPL_GROUNDED 0
 #else
@@ -92,7 +91,7 @@ NBR_TABLE_GLOBAL(rpl_parent_t, rpl_parents);
 /* Allocate instance table. */
 rpl_instance_t instance_table[RPL_MAX_INSTANCES];
 rpl_instance_t *default_instance;
-int attack_flag = 0;
+
 /*---------------------------------------------------------------------------*/
 void rpl_print_neighbor_list(void)
 {
@@ -119,6 +118,7 @@ void rpl_print_neighbor_list(void)
               link_stats_is_fresh(stats) ? 'f' : ' ',
               p == default_instance->current_dag->preferred_parent ? 'p' : ' ',
               stats != NULL ? (unsigned)((clock_now - stats->last_tx_time) / (60 * CLOCK_SECOND)) : -1u);
+
       p = nbr_table_next(rpl_parents, p);
     }
     LOG_DBG("RPL: end of list\n");
@@ -905,9 +905,6 @@ rpl_select_dag(rpl_instance_t *instance, rpl_parent_t *p)
 
   instance->of->update_metric_container(instance);
   /* Update the DAG rank. */
-  if (node_id == 12 && clock_seconds() > 60)
-    best_dag->rank = 512;
-  else
     best_dag->rank = rpl_rank_via_parent(best_dag->preferred_parent);
   // printf("rank %d min rank %d\n", best_dag->rank, best_dag->min_rank);
   // printf("clock second %lu\n", clock_seconds());
@@ -960,6 +957,7 @@ rpl_select_dag(rpl_instance_t *instance, rpl_parent_t *p)
     LOG_DBG("RPL: Preferred parent update, rank changed from %u to %u\n",
             (unsigned)old_rank, best_dag->rank);
   }
+  rpl_print_neighbor_list();
   return best_dag;
 }
 /*---------------------------------------------------------------------------*/
@@ -1780,57 +1778,7 @@ void rpl_process_dio(uip_ipaddr_t *from, rpl_dio_t *dio)
    * whether to keep it in the set.
    */
 
-  if (dio->rank > 256 && default_instance->current_dag->preferred_parent->rank > 256 && default_instance->current_dag->rank > 256 && dio->rank < default_instance->current_dag->preferred_parent->rank)
-  {
-    // if (dio->rank < default_instance->current_dag->preferred_parent->rank - 768)
-    // {
-    //   printf("dio rank %d\n", dio->rank);
-    //   char buf[40];
-    //   ////printf("Atacck flag %d\n",attack_flag);
-    //   uiplib_ipaddr_snprint(buf, sizeof(buf), from);
-    //   printf("Prev parent %s\n",buf);
-    //   printf("attack\n");
-    // }
-    int sum_of_nbr_ranks = 0;
-    int count_degree = 0;
-    float average;
-    // float deviation;
-
-    int rank_sqr = 0;
-    rpl_parent_t *nbr1 = NULL;
-    nbr1 = nbr_table_head(rpl_parents);
-    while (nbr1 != NULL)
-    {
-      if(rpl_rank_via_parent(nbr1)>0)
-      sum_of_nbr_ranks += (int)(rpl_rank_via_parent(nbr1) / 256);
-      
-      printf("rank of nbrs %d\n",rpl_rank_via_parent(nbr1)/256);
-      rank_sqr += (int)(rpl_rank_via_parent(nbr1) / 256) * (int)(rpl_rank_via_parent(nbr1) / 256);
-      count_degree++;
-      nbr1 = nbr_table_next(rpl_parents, nbr1);
     }
-    count_degree++;
-    rank_sqr += (int)(default_instance->current_dag->rank / 256) * (int)(default_instance->current_dag->rank / 256);
-    sum_of_nbr_ranks += (int)(default_instance->current_dag->rank / 256);
-
-    average = sum_of_nbr_ranks / (float)count_degree;
-    printf("%ld average\n", (long)average);
-    printf("%d node rank\n",default_instance->current_dag->rank/256);
-    printf("dio rank %d\n",dio->rank/256);
-    printf("difference %d\n",abs(dio->rank/256-(int)average));
-     char buf[40];
-      uiplib_ipaddr_snprint(buf, sizeof(buf), from);
-    if((int)average-dio->rank/256>10)
-    printf("sinhole %s\n",buf);
-    // float std_deviation = (rank_sqr / (float)count_degree) - (average * average);
-    // std_deviation = sqrtf(std_deviation);
-    // if (std_deviation > 0.0 && (int)(dio->rank / 256) < (average - (3 * std_deviation)))
-    // {
-
-     
-     
-    // }
-  }
   p = rpl_find_parent(dag, from);
   if (p == NULL)
   {

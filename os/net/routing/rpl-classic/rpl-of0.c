@@ -46,12 +46,11 @@
 #include "net/routing/rpl-classic/rpl-private.h"
 #include "net/nbr-table.h"
 #include "net/link-stats.h"
-
 #include "sys/log.h"
 
 #define LOG_MODULE "RPL"
 #define LOG_LEVEL LOG_LEVEL_RPL
-
+#include "sys/node-id.h"
 /* Constants from RFC6552. We use the default values. */
 #define RANK_STRETCH 0 /* Must be in the range [0;5] */
 #define RANK_FACTOR 1  /* Must be in the range [1;4] */
@@ -151,6 +150,7 @@ rank_via_parent(rpl_parent_t *p)
   {
     return RPL_INFINITE_RANK;
   }
+ 
   else
   {
     return MIN((uint32_t)p->rank + parent_rank_increase(p), RPL_INFINITE_RANK);
