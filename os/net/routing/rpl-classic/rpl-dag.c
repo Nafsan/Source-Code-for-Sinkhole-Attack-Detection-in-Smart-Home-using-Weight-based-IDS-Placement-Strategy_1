@@ -63,7 +63,10 @@
 #include <stdio.h>
 #include <limits.h>
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include"udp-client-malicious.h"
+=======
+>>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
 =======
 >>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
 #include <stdlib.h>
@@ -83,7 +86,10 @@ static rpl_of_t *const objective_functions[] = RPL_SUPPORTED_OFS;
 /*---------------------------------------------------------------------------*/
 /* RPL definitions. */
 <<<<<<< HEAD
+<<<<<<< HEAD
 int attack_flag = 0;
+=======
+>>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
 =======
 >>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
 #ifndef RPL_CONF_GROUNDED
@@ -127,10 +133,14 @@ void rpl_print_neighbor_list(void)
               p == default_instance->current_dag->preferred_parent ? 'p' : ' ',
               stats != NULL ? (unsigned)((clock_now - stats->last_tx_time) / (60 * CLOCK_SECOND)) : -1u);
 <<<<<<< HEAD
+<<<<<<< HEAD
               if(p->rank>rpl_rank_via_parent(p))
               {
                 printf("Yes\n");
               }
+=======
+
+>>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
 =======
 
 >>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
@@ -921,12 +931,15 @@ rpl_select_dag(rpl_instance_t *instance, rpl_parent_t *p)
   instance->of->update_metric_container(instance);
   /* Update the DAG rank. */
 <<<<<<< HEAD
+<<<<<<< HEAD
   // if (node_id == 12 && clock_seconds() > 60)
   //   best_dag->rank = 512;
   // else
   if(attack_flag)
    best_dag->rank = 512;
    else
+=======
+>>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
 =======
 >>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
     best_dag->rank = rpl_rank_via_parent(best_dag->preferred_parent);
@@ -1803,6 +1816,7 @@ void rpl_process_dio(uip_ipaddr_t *from, rpl_dio_t *dio)
    */
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   if (dio->rank > 256 && default_instance->current_dag->preferred_parent->rank > 256 && default_instance->current_dag->rank > 256 && dio->rank < default_instance->current_dag->preferred_parent->rank)
   {
     // if (dio->rank < default_instance->current_dag->preferred_parent->rank - 768)
@@ -1850,6 +1864,9 @@ void rpl_process_dio(uip_ipaddr_t *from, rpl_dio_t *dio)
     // if (std_deviation > 0.0 && (int16_t)(dio->rank / 256) < (average - (3 * std_deviation)))
     
   }
+=======
+    }
+>>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
 =======
     }
 >>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68

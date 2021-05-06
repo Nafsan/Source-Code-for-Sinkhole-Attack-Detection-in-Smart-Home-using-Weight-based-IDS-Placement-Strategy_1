@@ -75,6 +75,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
       LOG_INFO_6ADDR(&dest_ipaddr);
       LOG_INFO_("\n");
 <<<<<<< HEAD
+<<<<<<< HEAD
       // snprintf(str, sizeof(str), "hello %d", count);
       // simple_udp_sendto(&udp_conn, str, strlen(str), &dest_ipaddr);
       // count++;
@@ -82,6 +83,9 @@ PROCESS_THREAD(udp_client_process, ev, data)
 
       snprintf(str, sizeof(str), "%d %d %d %d", default_instance->current_dag->rank, node_id, (int)parent_ipaddr, default_instance->current_dag->preferred_parent->rank);
       // LOG_INFO("From client node id %d  node rank %d parent id %d parent rank %d\n", node_id, default_instance->current_dag->rank, (int)parent_ipaddr, default_instance->current_dag->preferred_parent->rank);
+=======
+      snprintf(str, sizeof(str), "hello I am IDS %d", count);
+>>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
 =======
       snprintf(str, sizeof(str), "hello I am IDS %d", count);
 >>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68

@@ -36,7 +36,11 @@
 #include "net/ipv6/simple-udp.h"
 #include "sys/log.h"
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include<math.h>
+=======
+#include <math.h>
+>>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
 =======
 #include <math.h>
 >>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
@@ -77,6 +81,7 @@ udp_rx_callback(struct simple_udp_connection *c,
   LOG_INFO_6ADDR(sender_addr);
   LOG_INFO("root rank %d\n", rpl_get_default_instance()->current_dag->rank);
   LOG_INFO_("\n");
+<<<<<<< HEAD
 <<<<<<< HEAD
   cnt++;
   int id = 1;
@@ -119,6 +124,9 @@ udp_rx_callback(struct simple_udp_connection *c,
       LOG_INFO("sinkhole attack ID %d\n", i);
     }
   }
+=======
+
+>>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
 =======
 
 >>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
