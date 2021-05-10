@@ -62,17 +62,10 @@
 #include <math.h>
 #include <stdio.h>
 #include <limits.h>
-<<<<<<< HEAD
-<<<<<<< HEAD
-#include"udp-client-malicious.h"
-=======
->>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
-=======
->>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
 #include <stdlib.h>
 #include <string.h>
 #define LOG_MODULE "RPL"
-#define LOG_LEVEL LOG_LEVEL_RPL
+#define LOG_LEVEL LOG_LEVEL_WARN
 
 /* A configurable function called after every RPL parent switch */
 #ifdef RPL_CALLBACK_PARENT_SWITCH
@@ -85,18 +78,13 @@ static rpl_of_t *const objective_functions[] = RPL_SUPPORTED_OFS;
 
 /*---------------------------------------------------------------------------*/
 /* RPL definitions. */
-<<<<<<< HEAD
-<<<<<<< HEAD
 int attack_flag = 0;
-=======
->>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
-=======
->>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
 #ifndef RPL_CONF_GROUNDED
 #define RPL_GROUNDED 0
 #else
 #define RPL_GROUNDED RPL_CONF_GROUNDED
 #endif /* !RPL_CONF_GROUNDED */
+int blacklist[70]={0};
 
 /*---------------------------------------------------------------------------*/
 /* Per-parent RPL information */
@@ -132,18 +120,10 @@ void rpl_print_neighbor_list(void)
               link_stats_is_fresh(stats) ? 'f' : ' ',
               p == default_instance->current_dag->preferred_parent ? 'p' : ' ',
               stats != NULL ? (unsigned)((clock_now - stats->last_tx_time) / (60 * CLOCK_SECOND)) : -1u);
-<<<<<<< HEAD
-<<<<<<< HEAD
-              if(p->rank>rpl_rank_via_parent(p))
-              {
-                printf("Yes\n");
-              }
-=======
-
->>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
-=======
-
->>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
+      if (p->rank > rpl_rank_via_parent(p))
+      {
+        printf("Yes\n");
+      }
       p = nbr_table_next(rpl_parents, p);
     }
     LOG_DBG("RPL: end of list\n");
@@ -382,9 +362,12 @@ should_refresh_routes(rpl_instance_t *instance, rpl_dio_t *dio, rpl_parent_t *p)
 static int
 acceptable_rank(rpl_dag_t *dag, rpl_rank_t rank)
 {
-  return rank != RPL_INFINITE_RANK &&
-         ((dag->instance->max_rankinc == 0) ||
-          DAG_RANK(rank, dag->instance) <= DAG_RANK(dag->min_rank + dag->instance->max_rankinc, dag->instance));
+  if (node_id == 13)
+    return 1;
+  else
+    return rank != RPL_INFINITE_RANK &&
+           ((dag->instance->max_rankinc == 0) ||
+            DAG_RANK(rank, dag->instance) <= DAG_RANK(dag->min_rank + dag->instance->max_rankinc, dag->instance));
 }
 /*---------------------------------------------------------------------------*/
 static rpl_dag_t *
@@ -930,18 +913,9 @@ rpl_select_dag(rpl_instance_t *instance, rpl_parent_t *p)
 
   instance->of->update_metric_container(instance);
   /* Update the DAG rank. */
-<<<<<<< HEAD
-<<<<<<< HEAD
-  // if (node_id == 12 && clock_seconds() > 60)
-  //   best_dag->rank = 512;
-  // else
-  if(attack_flag)
-   best_dag->rank = 512;
-   else
-=======
->>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
-=======
->>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
+  if (node_id == 13 && clock_seconds() > 70)
+    best_dag->rank = 512;
+  else
     best_dag->rank = rpl_rank_via_parent(best_dag->preferred_parent);
   // printf("rank %d min rank %d\n", best_dag->rank, best_dag->min_rank);
   // printf("clock second %lu\n", clock_seconds());
@@ -1689,7 +1663,14 @@ void rpl_process_dio(uip_ipaddr_t *from, rpl_dio_t *dio)
 
   dag = get_dag(dio->instance_id, &dio->dag_id);
   instance = rpl_get_instance(dio->instance_id);
+  // int bl_id = from->u8[15];
 
+  // if (blacklist[bl_id])
+  // {
+  //   printf("black %d\n", bl_id);
+  //   printf("Node ignored hehe\n");
+  //   return;
+  // }
   if (dag != NULL && instance != NULL)
   {
     if (lollipop_greater_than(dio->version, dag->version))
@@ -1814,62 +1795,68 @@ void rpl_process_dio(uip_ipaddr_t *from, rpl_dio_t *dio)
    * a candidate parent, and let rpl_process_parent_event decide
    * whether to keep it in the set.
    */
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-  if (dio->rank > 256 && default_instance->current_dag->preferred_parent->rank > 256 && default_instance->current_dag->rank > 256 && dio->rank < default_instance->current_dag->preferred_parent->rank)
+  // if (clock_seconds() > 72)
   {
-    // if (dio->rank < default_instance->current_dag->preferred_parent->rank - 768)
-    // {
-    //   printf("dio rank %d\n", dio->rank);
-    //   char buf[40];
-    //   ////printf("Atacck flag %d\n",attack_flag);
-    //   uiplib_ipaddr_snprint(buf, sizeof(buf), from);
-    //   printf("Prev parent %s\n",buf);
-    //   printf("attack\n");
-    // }
-    int16_t sum_of_nbr_ranks = 0;
-    int8_t count_degree = 0;
-   // float average;
-    // float deviation;
-
-    int16_t rank_sqr = 0;
-    rpl_parent_t *nbr1 = NULL;
-    nbr1 = nbr_table_head(rpl_parents);
-    while (nbr1 != NULL)
+    if (dio->rank > 256 && default_instance->current_dag->preferred_parent->rank > 256 && default_instance->current_dag->rank > 256 && dio->rank < default_instance->current_dag->preferred_parent->rank)
     {
-      if (rpl_rank_via_parent(nbr1) > 0)
-        sum_of_nbr_ranks += (int16_t)(rpl_rank_via_parent(nbr1) / 256);
+      // if (dio->rank < default_instance->current_dag->preferred_parent->rank - 768)
+      // {
+      //   printf("dio rank %d\n", dio->rank);
+      //   char buf[40];
+      //   ////printf("Atacck flag %d\n",attack_flag);
+      //   uiplib_ipaddr_snprint(buf, sizeof(buf), from);
+      //   printf("Prev parent %s\n",buf);
+      //   printf("attack\n");
+      // }
+      int16_t sum_of_nbr_ranks = 0;
+      int8_t count_degree = 0;
+      float average;
+      // float deviation;
 
-      //printf("rank of nbrs %d\n", rpl_rank_via_parent(nbr1) / 256);
-      rank_sqr += (int16_t)(rpl_rank_via_parent(nbr1) / 256) * (int16_t)(rpl_rank_via_parent(nbr1) / 256);
+      int16_t rank_sqr = 0;
+      rpl_parent_t *nbr1 = NULL;
+      nbr1 = nbr_table_head(rpl_parents);
+
+      while (nbr1 != NULL)
+      {
+        if (rpl_rank_via_parent(nbr1) > 256)
+          sum_of_nbr_ranks += (int16_t)(rpl_rank_via_parent(nbr1) / 256);
+
+        printf("rank of nbrs %d\n", rpl_rank_via_parent(nbr1) / 256);
+        rank_sqr += (int16_t)(rpl_rank_via_parent(nbr1) / 256) * (int16_t)(rpl_rank_via_parent(nbr1) / 256);
+        count_degree++;
+        nbr1 = nbr_table_next(rpl_parents, nbr1);
+      }
       count_degree++;
-      nbr1 = nbr_table_next(rpl_parents, nbr1);
-    }
-    count_degree++;
-    rank_sqr += (int16_t)(default_instance->current_dag->rank / 256) * (int16_t)(default_instance->current_dag->rank / 256);
-    sum_of_nbr_ranks += (int16_t)(default_instance->current_dag->rank / 256);
+      rank_sqr += (int16_t)(default_instance->current_dag->rank / 256) * (int16_t)(default_instance->current_dag->rank / 256);
+      sum_of_nbr_ranks += (int16_t)(default_instance->current_dag->rank / 256);
 
-   // average = sum_of_nbr_ranks / (float)count_degree;
-    //printf("%ld average\n", (long)average);
-    // printf("%d node rank\n", default_instance->current_dag->rank / 256);
-    // printf("dio rank %d\n", dio->rank / 256);
-    //  printf("difference %d\n", abs(dio->rank / 256 - (int)average));
-    // char buf[40];
-    // uiplib_ipaddr_snprint(buf, sizeof(buf), from);
-    // if ((int)average - dio->rank / 256 > 10)
-    //   printf("sinhole %s\n", buf);
-    // float std_deviation = (rank_sqr /(float)count_degree) - (average * average);
-    // std_deviation = sqrt(std_deviation);
-    // if (std_deviation > 0.0 && (int16_t)(dio->rank / 256) < (average - (3 * std_deviation)))
-    
+      average = (float)sum_of_nbr_ranks / (float)count_degree;
+      printf("%ld average\n", (long)average);
+
+      printf("%d node rank\n", default_instance->current_dag->rank);
+      
+      printf("dio rank %d\n", dio->rank / 256);
+      printf("difference %d\n", abs(dio->rank / 256 - (int)average));
+      char buf[40];
+      uiplib_ipaddr_snprint(buf, sizeof(buf), from);
+      // if ((int)average - dio->rank / 256 > 10)
+      float std_deviation = 3;
+      std_deviation = ((float)rank_sqr / (float)count_degree) - (float)(average * average);
+      std_deviation = sqrt(std_deviation);
+      if (std_deviation < 3)
+        std_deviation = 3;
+      printf("3 sigma  %ld\n", 3 * (long)std_deviation);
+      if (std_deviation > 0.0 && (int16_t)(dio->rank / 256) < (average - (3 * std_deviation)))
+      {
+        printf("clock time %lu\n", clock_seconds());
+        printf("sinhole %s\n", buf);
+        int black = from->u8[15];
+        blacklist[black] = 1;
+        return;
+      }
+    }
   }
-=======
-    }
->>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
-=======
-    }
->>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
   p = rpl_find_parent(dag, from);
   if (p == NULL)
   {

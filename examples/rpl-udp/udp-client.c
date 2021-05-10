@@ -42,7 +42,8 @@ udp_rx_callback(struct simple_udp_connection *c,
 
   LOG_INFO("Received response '%.*s' from ", datalen, (char *)data);
   LOG_INFO_6ADDR(sender_addr);
-  // LOG_INFO("%d node rank\n", rpl_get_default_instance()->current_dag->rank);
+  LOG_INFO("\n %d node rank\n", default_instance->current_dag->rank);
+ // rpl_print_neighbor_list();
   LOG_INFO("Clock seconds %lu\n", clock_seconds());
 #if LLSEC802154_CONF_ENABLED
   LOG_INFO_(" LLSEC LV:%d", uipbuf_get_attr(UIPBUF_ATTR_LLSEC_LEVEL));
@@ -54,7 +55,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
 {
   static struct etimer periodic_timer;
   static unsigned count;
-  static char str[32];
+  // static char str[32];
   uip_ipaddr_t dest_ipaddr;
 
   PROCESS_BEGIN();
@@ -74,24 +75,18 @@ PROCESS_THREAD(udp_client_process, ev, data)
       LOG_INFO("Sending request %u to ", count);
       LOG_INFO_6ADDR(&dest_ipaddr);
       LOG_INFO_("\n");
-<<<<<<< HEAD
-<<<<<<< HEAD
+      LOG_INFO("\n %d node rank\n", default_instance->current_dag->rank);
+      
       // snprintf(str, sizeof(str), "hello %d", count);
       // simple_udp_sendto(&udp_conn, str, strlen(str), &dest_ipaddr);
       // count++;
-      uip_ipaddr_t *parent_ipaddr = rpl_parent_get_ipaddr(default_instance->current_dag->preferred_parent);
+      //  const uip_ipaddr_t *parent_ipaddr = rpl_parent_get_ipaddr(default_instance->current_dag->preferred_parent);
 
-      snprintf(str, sizeof(str), "%d %d %d %d", default_instance->current_dag->rank, node_id, (int)parent_ipaddr, default_instance->current_dag->preferred_parent->rank);
-      // LOG_INFO("From client node id %d  node rank %d parent id %d parent rank %d\n", node_id, default_instance->current_dag->rank, (int)parent_ipaddr, default_instance->current_dag->preferred_parent->rank);
-=======
-      snprintf(str, sizeof(str), "hello I am IDS %d", count);
->>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
-=======
-      snprintf(str, sizeof(str), "hello I am IDS %d", count);
->>>>>>> e6a0a65b2e23bb29fc49a1e8fcd7e5065f420b68
-      simple_udp_sendto(&udp_conn, str, strlen(str), &dest_ipaddr);
+      //   snprintf(str, sizeof(str), "%d %d %d %d", default_instance->current_dag->rank, node_id,parent_ipaddr->u8[14], default_instance->current_dag->preferred_parent->rank);
+      //   LOG_INFO("From client node id %d  node rank %d parent id %d parent rank %d\n", node_id, default_instance->current_dag->rank, parent_ipaddr->u8[14], default_instance->current_dag->preferred_parent->rank);
+      //   //snprintf(str, sizeof(str), "hello I am IDS %d", count);
+      //   simple_udp_sendto(&udp_conn, str, strlen(str), &dest_ipaddr);
       count++;
-      
     }
     else
     {
