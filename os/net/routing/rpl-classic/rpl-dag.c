@@ -362,7 +362,7 @@ should_refresh_routes(rpl_instance_t *instance, rpl_dio_t *dio, rpl_parent_t *p)
 static int
 acceptable_rank(rpl_dag_t *dag, rpl_rank_t rank)
 {
-  if (node_id == 13)
+  if (node_id == 12)
     return 1;
   else
     return rank != RPL_INFINITE_RANK &&
@@ -913,7 +913,7 @@ rpl_select_dag(rpl_instance_t *instance, rpl_parent_t *p)
 
   instance->of->update_metric_container(instance);
   /* Update the DAG rank. */
-  if (node_id == 13 && clock_seconds() > 70)
+  if (node_id == 12 && clock_seconds() > 70)
     best_dag->rank = 512;
   else
     best_dag->rank = rpl_rank_via_parent(best_dag->preferred_parent);
@@ -1663,14 +1663,15 @@ void rpl_process_dio(uip_ipaddr_t *from, rpl_dio_t *dio)
 
   dag = get_dag(dio->instance_id, &dio->dag_id);
   instance = rpl_get_instance(dio->instance_id);
-  // int bl_id = from->u8[15];
+  int bl_id = from->u8[15];
 
-  // if (blacklist[bl_id])
-  // {
-  //   printf("black %d\n", bl_id);
-  //   printf("Node ignored hehe\n");
-  //   return;
-  // }
+  if (blacklist[bl_id])
+  {
+    printf("black %d\n", bl_id);
+    printf("Node ignored hehe\n");
+    return;
+  }
+
   if (dag != NULL && instance != NULL)
   {
     if (lollipop_greater_than(dio->version, dag->version))
