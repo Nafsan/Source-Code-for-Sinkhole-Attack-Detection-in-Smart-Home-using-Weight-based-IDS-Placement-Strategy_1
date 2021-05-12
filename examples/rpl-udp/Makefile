@@ -1,4 +1,4 @@
-CONTIKI_PROJECT = udp-client udp-server udp-client-malicious
+CONTIKI_PROJECT = udp-client udp-server
 all: $(CONTIKI_PROJECT)
 CONTIKI_NO_NET=1
 CONTIKI=../..

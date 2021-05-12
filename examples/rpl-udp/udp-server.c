@@ -35,31 +35,87 @@
 #include "net/netstack.h"
 #include "net/ipv6/simple-udp.h"
 #include "sys/log.h"
+#include <math.h>
+#include <math.h>
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #define LOG_MODULE "App"
 #define LOG_LEVEL LOG_LEVEL_INFO
 
-#define WITH_SERVER_REPLY  1
-#define UDP_CLIENT_PORT	8765
-#define UDP_SERVER_PORT	5678
+#define WITH_SERVER_REPLY 1
+#define UDP_CLIENT_PORT 8765
+#define UDP_SERVER_PORT 5678
 
 static struct simple_udp_connection udp_conn;
-
+struct node_info
+{
+  int nodeId;
+  int nodeRank;
+  int parentId;
+  int parentRank;
+};
+static struct node_info information[100];
+static int cnt = 0;
+int node_rank, node_iid, addr, parent_rank;
 PROCESS(udp_server_process, "UDP server");
 AUTOSTART_PROCESSES(&udp_server_process);
 /*---------------------------------------------------------------------------*/
 static void
 udp_rx_callback(struct simple_udp_connection *c,
-         const uip_ipaddr_t *sender_addr,
-         uint16_t sender_port,
-         const uip_ipaddr_t *receiver_addr,
-         uint16_t receiver_port,
-         const uint8_t *data,
-         uint16_t datalen)
+                const uip_ipaddr_t *sender_addr,
+                uint16_t sender_port,
+                const uip_ipaddr_t *receiver_addr,
+                uint16_t receiver_port,
+                const uint8_t *data,
+                uint16_t datalen)
 {
-  LOG_INFO("Received request '%.*s' from ", datalen, (char *) data);
+  LOG_INFO("Received request '%.*s' from ", datalen, (char *)data);
   LOG_INFO_6ADDR(sender_addr);
-  LOG_INFO("root rank %d\n",rpl_get_default_instance()->current_dag->rank);
+  LOG_INFO("root rank %d\n", rpl_get_default_instance()->current_dag->rank);
   LOG_INFO_("\n");
+  cnt++;
+  int id = 1;
+  //LOG_INFO("Serber rank %d\n", curr_instance.dag.rank);
+  char str[datalen + 1];
+  memset(str, 0, datalen + 1);
+  memcpy(str, (char *)data, datalen);
+  LOG_INFO("hehe str %s --\n", str);
+  char *token = strtok(str, " ");
+  node_rank = atoi(token);
+  while (token != NULL)
+  {
+    id++;
+    if (id == 3)
+      node_iid = atoi(token);
+    // LOG_INFO("hehe %d\n", node_rank);
+    if (id == 4)
+      addr = atoi(token);
+    if (id == 5)
+      parent_rank = atoi(token);
+
+    token = strtok(NULL, " ");
+  }
+  //printf("to server node id %d node rank %d parent addr %d parent rank %d\n", node_iid, node_rank, addr, parent_rank);
+
+  information[node_iid].nodeId = node_iid;
+  information[node_iid].nodeRank = node_rank;
+  information[node_iid].parentId = sender_addr->u8[14];
+  information[node_iid].parentRank = parent_rank;
+  int i = 0;
+  // for (i = 0; i < 20; i++)
+  // {
+  //   LOG_INFO("check %d %d\n", information[i].nodeRank, information[i].parentRank);
+  // }
+  for (i = 0; i < 100; i++)
+  {
+    if (information[i].nodeRank < information[i].parentRank && information[i].nodeRank > 256)
+    {
+      LOG_INFO("%d node rank and %d parent rank\n", information[i].nodeRank, information[i].parentRank);
+      LOG_INFO("sinkhole attack ID %d\n", i);
+    }
+  }
 #if WITH_SERVER_REPLY
   /* send back the same string to the client as an echo reply */
   LOG_INFO("Sending response.\n");

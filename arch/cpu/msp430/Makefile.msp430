@@ -155,7 +155,7 @@ ifdef CPU_HAS_MSP430X
  else
   TARGET_MEMORY_MODEL = medium
   CFLAGS += -mmemory-model=$(TARGET_MEMORY_MODEL)
-  CFLAGS += -ffunction-sections -fdata-sections -mcode-region=far
+  CFLAGS += -ffunction-sections -fdata-sections -mcode-region=any
   LDFLAGS += -mmemory-model=$(TARGET_MEMORY_MODEL) -Wl,-gc-sections
  endif
 endif
