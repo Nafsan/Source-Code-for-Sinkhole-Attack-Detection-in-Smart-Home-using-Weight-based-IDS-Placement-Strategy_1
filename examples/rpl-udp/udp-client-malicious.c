@@ -67,12 +67,12 @@ PROCESS_THREAD(udp_client_process, ev, data)
       {
         if (attack_flag)
         {
-          printf("Attackkkkkk deavtivated\n");
+          printf("Attack deavtivated\n");
           attack_flag = 0;
         }
         else
         {
-          printf(" Attackkkk activated\n");
+          printf(" Attack activated\n");
           attack_flag = 1;
         }
       }
@@ -80,6 +80,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
       LOG_INFO("Sending request %u to ", count);
       LOG_INFO_6ADDR(&dest_ipaddr);
       LOG_INFO_("\n");
+      LOG_INFO("\n %d node rank\n", default_instance->current_dag->rank);
       snprintf(str, sizeof(str), "hello %d", count);
       simple_udp_sendto(&udp_conn, str, strlen(str), &dest_ipaddr);
       count++;

@@ -362,7 +362,7 @@ should_refresh_routes(rpl_instance_t *instance, rpl_dio_t *dio, rpl_parent_t *p)
 static int
 acceptable_rank(rpl_dag_t *dag, rpl_rank_t rank)
 {
-  if (node_id == 12)
+  if (node_id == 9)
     return 1;
   else
     return rank != RPL_INFINITE_RANK &&
@@ -913,7 +913,7 @@ rpl_select_dag(rpl_instance_t *instance, rpl_parent_t *p)
 
   instance->of->update_metric_container(instance);
   /* Update the DAG rank. */
-  if (node_id == 12 && clock_seconds() > 70)
+  if (node_id == 9 && clock_seconds() > 70)
     best_dag->rank = 512;
   else
     best_dag->rank = rpl_rank_via_parent(best_dag->preferred_parent);
@@ -1667,8 +1667,8 @@ void rpl_process_dio(uip_ipaddr_t *from, rpl_dio_t *dio)
 
   if (blacklist[bl_id])
   {
-    printf("black %d\n", bl_id);
-    printf("Node ignored hehe\n");
+    printf("blacklisted node = %d\n", bl_id);
+    printf("Node ignored to become a parent\n");
     return;
   }
 
@@ -1847,7 +1847,7 @@ void rpl_process_dio(uip_ipaddr_t *from, rpl_dio_t *dio)
       std_deviation = sqrt(std_deviation);
       if (std_deviation < 3)
         std_deviation = 3;
-      printf("3 sigma  %ld\n", 3 * (long)std_deviation);
+      // printf("3 sigma  %ld\n", 3 * (long)std_deviation);
       if (std_deviation > 0.0 && (int16_t)(dio->rank / 256) < (average - (3 * std_deviation)))
       {
         printf("clock time %lu\n", clock_seconds());
